@@ -1,0 +1,40 @@
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+</head>
+<body>
+
+
+  <script>
+  function BattleViewModel(){
+    var self = this;
+    self.participants = ko.observableArray();
+    self.currentAction = ko.observable();
+
+    self.nextTurn = function(){
+      if self.currentAction() < (self.participants().length - 1){
+        self.currentAction(self.currentAction()+1);
+      } else {
+        self.currentAction(0)
+      }
+    }
+  }
+
+  function ParticipantViewModel(){
+    var self = this;
+    self.name = ko.observable();
+    self.ac = ko.observable();
+    self.initiative = ko.observable();
+    self.hp = ko.observable();
+    self.attackBonus = ko.observable();
+
+    self.addParticipant = function(name,ac,initiative,hp,attackBonus){
+      BattleViewModel.participants().push(self);
+      BattleViewModel.participants().sort(function(p1,p2){
+        p1.initiative() > p2.initiative();
+      });
+    }
+  }
+
+  BattleVM = new BattleViewModel();
+  </script>
+</body>
