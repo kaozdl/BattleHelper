@@ -2,8 +2,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
 </head>
 <body>
-
-
+  <ul>
+  <!--ko.foreach participants -->
+    <li>
+      <input type="text" data-bind="text:name" ></input>
+      <input type="text" data-bind="text:ac"></input>
+      <input type="text" data-bind="text:initiative"></input>
+      <input type="text" data-bind="text:hp"></input>
+      <input type="text" data-bind="text:attackBonus"></input>
+    </li>
+  <!--/ko-->
+  </ul>
+  <button data-bind="click:addParticipant" ></button>
   <script>
   function BattleViewModel(){
     var self = this;
@@ -24,10 +34,15 @@
     self.name = ko.observable();
     self.ac = ko.observable();
     self.initiative = ko.observable();
-    self.hp = ko.observable();
+    self.hp = ko.observable("--");
+    self.hp.subscribe(value,function(){
+      if (val == "D"){
+        BattleVM.participants().remove(self);
+      }
+    })
     self.attackBonus = ko.observable();
 
-    self.addParticipant = function(name,ac,initiative,hp,attackBonus){
+    self.addParticipant = function(){
       BattleViewModel.participants().push(self);
       BattleViewModel.participants().sort(function(p1,p2){
         p1.initiative() > p2.initiative();
