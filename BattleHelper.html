@@ -17,6 +17,7 @@
           <td><input data-bind="value:charName"></input></td>
           <td><input data-bind="value:armorClass"></input></td>
           <td><input data-bind="value:hitPoints"></input></td>
+          <td><button data-bind="click: $root.removeCombatant">Remove</button></td>
         <tr>
       </tbody>
       <button data-bind="click: addPlayer">Add Player</button>
@@ -40,10 +41,9 @@
         self.combatants.push(new Combatant());
       }
       self.sortArray = function(){
-        self.combatants().sort(function(c1,c2) {
-          return c1.initiative > c2.initiative;
-        });
+        self.combatants.sort(function(c1, c2){return c2.initiative() - c1.initiative()});
       }
+      self.removeCombatant = function(combatant) { self.combatants.remove(combatant)}
     }
 
     ko.applyBindings(new CombatViewModel());
