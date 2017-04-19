@@ -56,12 +56,12 @@
       }
 
       self.removeCombatant = function(combatant){
-        netxturn = self.combatants.indexOf(combatant);
+        netxturn = self.combatants().indexOf(combatant);
         self.combatants()[netxturn].myTurn(false);
         if (netxturn == 0){
-          netxturn = (self.combatants.length - 1);
+          netxturn = (self.combatants().length - 1);
         } else {
-          netxturn = (current - 1);
+          netxturn = (netxturn - 1);
         };
         self.combatants()[netxturn].myTurn(true);
         self.combatants.remove(combatant)
