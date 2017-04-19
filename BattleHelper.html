@@ -8,11 +8,16 @@
     <table>
       <thead>
         <tr>
-          <th>Initiative</th><th>Character Name</th><th>Armor Class</th><th>Hit Points</th>
+          <th>Turn</th>
+          <th>Initiative</th>
+          <th>Character Name</th>
+          <th>Armor Class</th>
+          <th>Hit Points</th>
         </tr>
       <thead>
       <tbody data-bind="foreach: combatants">
         <tr>
+          <td><input type="checkbox" data-bind="checked: myTurn" disabled="true"></input></td>
           <td><input data-bind="value:initiative"></input></td>
           <td><input data-bind="value:charName"></input></td>
           <td><input data-bind="value:armorClass"></input></td>
@@ -20,30 +25,52 @@
           <td><button data-bind="click: $root.removeCombatant">Remove</button></td>
         <tr>
       </tbody>
-      <button data-bind="click: addPlayer">Add Player</button>
-      <button data-bind="click: sortArray">Start Combat</button>
+      <div style="text-align:center">
+        <button data-bind="click: addPlayer">Add Player</button>
+        <button data-bind="click: startCombat">Start Combat</button>
+        <button data-bind="click: nextTurn">Next Turn</button>
+      </div>
   </div>
   </ul>
   <script type="text/javascript">
     function Combatant(){
       var self = this;
+      self.myTurn = ko.observable();
       self.initiative = ko.observable();
       self.charName = ko.observable();
       self.armorClass = ko.observable();
       self.hitPoints = ko.observable();
     }
 
-    function CombatViewModel() {
+    function CombatViewModel(){
       var self = this;
       self.combatants = ko.observableArray();
+      self.currentRound = ko.observable(0);
       // Functions
       self.addPlayer = function(){
         self.combatants.push(new Combatant());
       }
+
       self.sortArray = function(){
         self.combatants.sort(function(c1, c2){return c2.initiative() - c1.initiative()});
       }
-      self.removeCombatant = function(combatant) { self.combatants.remove(combatant)}
+
+      self.removeCombatant = function(combatant){ self.combatants.remove(combatant)}
+
+      self.startCombat = function(){
+        self.sortArray()
+        self.combatants()[0].myTurn(true);
+      }
+
+      self.nextTurn = function(){
+        self.combatants()[self.currentRound()].myTurn(false);
+        if (self.currentRound() < self.combatants().length - 1){
+          self.currentRound(self.currentRound() + 1);
+        } else {
+          self.currentRound(0);
+        }
+        self.combatants()[self.currentRound()].myTurn(true);
+      }
     }
 
     ko.applyBindings(new CombatViewModel());
