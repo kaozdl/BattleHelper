@@ -1,55 +1,51 @@
 <head>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
 </head>
 <body>
   <ul>
-  <!--ko.foreach participants -->
-    <li>
-      <input type="text" data-bind="text:name" ></input>
-      <input type="text" data-bind="text:ac"></input>
-      <input type="text" data-bind="text:initiative"></input>
-      <input type="text" data-bind="text:hp"></input>
-      <input type="text" data-bind="text:attackBonus"></input>
-    </li>
-  <!--/ko-->
+  <div id="currentBattle">
+    <table>
+      <thead>
+        <tr>
+          <th>Initiative</th><th>Character Name</th><th>Armor Class</th><th>Hit Points</th>
+        </tr>
+      <thead>
+      <tbody data-bind="foreach: combatants">
+        <tr>
+          <td><input data-bind="value:initiative"></input></td>
+          <td><input data-bind="value:charName"></input></td>
+          <td><input data-bind="value:armorClass"></input></td>
+          <td><input data-bind="value:hitPoints"></input></td>
+        <tr>
+      </tbody>
+      <button data-bind="click: addPlayer">Add Player</buttom>
+      <button data-bind="click: sortArray">Start Combat</button>
+  </div>
   </ul>
-  <button data-bind="click:addParticipant" ></button>
-  <script>
-  function BattleViewModel(){
-    var self = this;
-    self.participants = ko.observableArray();
-    self.currentAction = ko.observable();
+  <script type="text/javascript">
+    function Combatant(){
+      var self = this;
+      self.initiative = ko.observable();
+      self.charName = ko.observable();
+      self.armorClass = ko.observable();
+      self.hitPoints = ko.observable();
+    }
 
-    self.nextTurn = function(){
-      if self.currentAction() < (self.participants().length - 1){
-        self.currentAction(self.currentAction()+1);
-      } else {
-        self.currentAction(0)
+    function CombatViewModel() {
+      var self = this;
+      self.combatants = ko.observableArray();
+      // Functions
+      self.addPlayer = function(){
+        self.combatants.push(new Combatant());
+      }
+      self.sortArray = function(){
+        self.combatants().sort(function(c1,c2) {
+          return c1.initiative > c2.initiative;
+        });
       }
     }
-  }
 
-  function ParticipantViewModel(){
-    var self = this;
-    self.name = ko.observable();
-    self.ac = ko.observable();
-    self.initiative = ko.observable();
-    self.hp = ko.observable("--");
-    self.hp.subscribe(value,function(){
-      if (val == "D"){
-        BattleVM.participants().remove(self);
-      }
-    })
-    self.attackBonus = ko.observable();
-
-    self.addParticipant = function(){
-      BattleViewModel.participants().push(self);
-      BattleViewModel.participants().sort(function(p1,p2){
-        p1.initiative() > p2.initiative();
-      });
-    }
-  }
-
-  BattleVM = new BattleViewModel();
+    ko.applyBindings(new CombatViewModel());
   </script>
 </body>
